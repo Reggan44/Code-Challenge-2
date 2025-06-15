@@ -1,115 +1,179 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Get references to HTML elements
-    const guestForm = document.getElementById('guest-form');
-    const guestNameInput = document.getElementById('guest-name');
-    const guestCategorySelect = document.getElementById('guest-category');
-    const guestList = document.getElementById('guest-list');
-    const guestCountLabel = document.getElementById('guest-count-label');
+// When everything's ready, let's set up our guest list
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // Grab all the elements we'll need
+  const guestForm = document.getElementById('guest-form');
+  const nameInput = document.getElementById('guest-name');
+  const relationshipSelect = document.getElementById('guest-category');
+  const guestDisplay = document.getElementById('guest-list');
+  const guestCounter = document.getElementById('guest-count-label');
 
-    // Guest data
-    let guests = [];
-    const MAX_GUESTS = 10;
+  // Our growing guest list
+  let guests = [];
+  const MAX_GUESTS = 10; // A reasonable number for most events
 
-    // Handle form submission
-    guestForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+  // When someone adds a guest
+  guestForm.addEventListener('submit', function(event) {
+    event.preventDefault(); // Keep our page from refreshing
+    
+    const guestName = nameInput.value.trim();
+    const relationship = relationshipSelect.value;
 
-        const name = guestNameInput.value.trim();
-        const category = guestCategorySelect.value;
+    // Simple validation - like checking invitations before sending
+    if (!guestName) {
+      showNotice("Please enter your guest's name");
+      nameInput.focus();
+      return;
+    }
 
-        // Don't proceed with empty name
-        if (!name) return;
+    // Check if we have space
+    if (guests.length >= MAX_GUESTS) {
+      showNotice(`We've reached our maximum of ${MAX_GUESTS} guests. 
+                 You might need to adjust your list.`);
+      return;
+    }
 
-        // Enforce guest limit
-        if (guests.length >= MAX_GUESTS) {
-            alert(`Guest list is full. Maximum allowed is ${MAX_GUESTS} guests.`);
-            return;
-        }
+    // Create our guest record
+    const newGuest = {
+      id: Date.now(), // Simple unique identifier
+      name: guestName,
+      relationship: relationship,
+      confirmed: true, // Optimistically assume they'll come
+      invitedOn: new Date() // Track when they were added
+    };
 
-        // Create guest object
-        const newGuest = {
-            id: Date.now(),
-            name,
-            category,
-            attending: true,
-            timestamp: new Date()
-        };
+    // Add to our list and refresh the display
+    guests.push(newGuest);
+    refreshGuestDisplay();
+    
+    // Show confirmation
+    showNotice(`${guestName} added to your guest list`, 'success');
+    
+    // Reset for the next entry
+    nameInput.value = '';
+    nameInput.focus();
+  });
 
-        // Add to list and update UI
-        guests.push(newGuest);
-        renderGuestList();
+  // Refresh the guest list display
+  function refreshGuestDisplay() {
+    // Clear existing display
+    guestDisplay.innerHTML = '';
+    
+    // Update counter
+    guestCounter.textContent = `${guests.length} of ${MAX_GUESTS} invited`;
+    
+    // Show special message if list is empty
+    if (guests.length === 0) {
+      guestDisplay.innerHTML = `
+        <li class="empty-notice">
+          <p>Your guest list is empty</p>
+          <p>Start by adding your first guest</p>
+        </li>`;
+      return;
+    }
 
-        // Reset form
-        guestNameInput.value = '';
-        guestNameInput.focus();
+    // Create an entry for each guest
+    guests.forEach(function(guest) {
+      const guestEntry = document.createElement('li');
+      guestEntry.className = `guest-entry ${guest.relationship}`;
+      
+      guestEntry.innerHTML = `
+        <div class="guest-details">
+          <h3>${guest.name}</h3>
+          <p class="relationship">${formatRelationship(guest.relationship)}</p>
+          <p class="invite-date">Invited on ${formatDate(guest.invitedOn)}</p>
+        </div>
+        <div class="guest-actions">
+          <button class="confirmation-toggle ${guest.confirmed ? 'confirmed' : 'declined'}" 
+                  data-id="${guest.id}">
+            ${guest.confirmed ? 'Confirmed' : 'Declined'}
+          </button>
+          <button class="remove-guest" data-id="${guest.id}">
+            Remove
+          </button>
+        </div>
+      `;
+
+      guestDisplay.appendChild(guestEntry);
     });
 
-    // Render guest list on the page
-    function renderGuestList() {
-        guestList.innerHTML = '';
-        guestCountLabel.textContent = `(${guests.length} of ${MAX_GUESTS} spots filled)`;
+    // Set up interaction handlers
+    setupGuestInteractions();
+  }
 
-        guests.forEach(guest => {
-            const li = document.createElement('li');
-            li.className = `guest-item ${guest.category}`;
-
-            li.innerHTML = `
-                <div class="guest-info">
-                    <strong class="guest-name">${guest.name}</strong> 
-                    <em>(${guest.category})</em>
-                    <span class="timestamp">${formatTime(guest.timestamp)}</span>
-                </div>
-                <div class="guest-actions">
-                    <button class="rsvp-btn ${guest.attending ? '' : 'not-attending'}" data-id="${guest.id}">
-                        ${guest.attending ? 'Attending' : 'Not Attending'}
-                    </button>
-                    <button class="delete-btn" data-id="${guest.id}">Remove</button>
-                </div>
-            `;
-
-            guestList.appendChild(li);
-        });
-
-        // Add interactivity
-        document.querySelectorAll('.rsvp-btn').forEach(button =>
-            button.addEventListener('click', toggleRSVP)
-        );
-
-        document.querySelectorAll('.delete-btn').forEach(button =>
-            button.addEventListener('click', deleteGuest)
-        );
-    }
-
-    // Toggle RSVP status
-    function toggleRSVP(e) {
-        const id = parseInt(e.target.dataset.id);
-        guests = guests.map(guest => {
-            if (guest.id === id) {
-                guest.attending = !guest.attending;
-            }
-            return guest;
-        });
-        renderGuestList();
-    }
-    // Remove button
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "Remove";
-    removeBtn.className = "remove-btn";
-    removeBtn.addEventListener("click", () => {
-      guests = guests.filter((g) => g.id !== guest.id);
-      renderGuests();
+  // Set up all interactive elements
+  function setupGuestInteractions() {
+    // Handle confirmation toggles
+    document.querySelectorAll('.confirmation-toggle').forEach(function(button) {
+      button.addEventListener('click', function() {
+        const guestId = parseInt(this.dataset.id);
+        toggleConfirmation(guestId);
+      });
     });
 
-    // Delete guest
-    function deleteGuest(e) {
-        const id = parseInt(e.target.dataset.id);
-        guests = guests.filter(guest => guest.id !== id);
-        renderGuestList();
-    }
+    // Handle guest removal
+    document.querySelectorAll('.remove-guest').forEach(function(button) {
+      button.addEventListener('click', function() {
+        const guestId = parseInt(this.dataset.id);
+        removeGuest(guestId);
+      });
+    });
+  }
 
-    // Format time (e.g. "04:12 PM")
-    function formatTime(date) {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  // Toggle guest confirmation status
+  function toggleConfirmation(guestId) {
+    guests = guests.map(function(guest) {
+      if (guest.id === guestId) {
+        const newStatus = !guest.confirmed;
+        showNotice(
+          `${guest.name} ${newStatus ? 'is confirmed' : 'can no longer attend'}`,
+          newStatus ? 'success' : 'notice'
+        );
+        return { ...guest, confirmed: newStatus };
+      }
+      return guest;
+    });
+    refreshGuestDisplay();
+  }
+
+  // Remove a guest from the list
+  function removeGuest(guestId) {
+    const guest = guests.find(function(g) { return g.id === guestId; });
+    if (confirm(`Remove ${guest.name} from your guest list?`)) {
+      guests = guests.filter(function(g) { return g.id !== guestId; });
+      refreshGuestDisplay();
+      showNotice(`${guest.name} removed from your list`, 'notice');
     }
+  }
+
+  // Format relationship for display
+  function formatRelationship(relationship) {
+    const relationships = {
+      friend: 'Friend',
+      family: 'Family Member',
+      colleague: 'Colleague',
+      other: 'Guest'
+    };
+    return relationships[relationship] || 'Guest';
+  }
+
+  // Format date simply
+  function formatDate(date) {
+    return date.toLocaleDateString();
+  }
+
+  // Show notices to the user
+  function showNotice(message, type = 'alert') {
+    const notice = document.createElement('div');
+    notice.className = `user-notice ${type}`;
+    notice.textContent = message;
+    
+    document.body.appendChild(notice);
+    
+    // Remove after a few seconds
+    setTimeout(function() {
+      notice.classList.add('fading-out');
+      setTimeout(function() { notice.remove(); }, 300);
+    }, 3000);
+  }
 });
-
