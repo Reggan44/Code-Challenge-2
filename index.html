@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guest List Manager</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Guest List Plan</h1>
+
+    <form id="guest-form" aria-label="Add a guest to the event">
+      <label for="guest-name" class="sr-only">Guest Name</label>
+      <input
+        type="text"
+        id="guest-name"
+        placeholder="Type your guest's full name..."
+        required
+      />
+
+      <label for="guest-category" class="sr-only">Guest Category</label>
+      <select id="guest-category">
+        <option value="friend">Friend</option>
+        <option value="family">Family</option>
+        <option value="job colleague">Colleague</option>
+        <option value="school/class mate">School/Class Mate</option>
+      </select>
+
+      <button type="submit">Add Guest</button>
+    </form>
+
+    <div id="guest-list-container">
+      <h2>Guest List <span id="guest-count-label">(0 of 10 spots filled)</span></h2>
+      <ul id="guest-list" aria-live="polite"></ul>
+    </div>
+  </div>
+
+  <img src="pics/emma-simpson-mNGaaLeWEp0-unsplash.jpg" class="event-image" alt="Event Image">
+
+  <!-- Load JavaScript only once -->
+  <script src="src/index.js" defer></script>
+</body>
+</html>

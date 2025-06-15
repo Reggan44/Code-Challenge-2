@@ -1,0 +1,155 @@
+/*General Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #0c0c0c; /* softer blue-gray background */
+}    
+
+/*Main Container */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/*Friendly Headings */
+h1, h2 {
+    color: #2c3e50;
+    text-align: center;
+}
+
+/*Form Styling */
+#guest-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+#guest-form input, #guest-form select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+#guest-form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#guest-form button:hover {
+    background-color: #45a049;
+}
+
+/*Guest List */
+#guest-list {
+    list-style: none;
+    padding: 0;
+}
+
+/*Guest Item */
+.guest-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #fdfdfd;
+    border-radius: 8px;
+    border-left: 6px solid #4CAF50;
+}
+
+/*Category Color Tags */
+.guest-item.family {
+    border-left-color: #2196F3; /* Blue */
+}
+
+.guest-item.colleague {
+    border-left-color: #ff9800; /* Orange */
+}
+
+/*Info & Actions Layout */
+.guest-item .guest-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.guest-item .guest-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/*Guest Action Buttons */
+.guest-item button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/*RSVP Toggle */
+.rsvp-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.rsvp-btn.not-attending {
+    background-color: #f44336;
+}
+
+/*Delete */
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+/*Edit */
+.edit-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+/*Timestamp */
+.timestamp {
+    font-size: 0.8em;
+    color: #706e92;
+}
+
+/*Alert Message */
+.alert {
+    color: #f44336;
+    margin-top: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+.event-image {
+    width: 30%;
+    width: auto;
+    height: 500px;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin: 30px auto;
+    display: block;
+    align-content: center;
+    background-position:center;
+background-size:auto;
+background-repeat: no-repeat;
+}
+
