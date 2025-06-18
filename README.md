@@ -104,7 +104,8 @@ Edit
 Let me know if you’d like a version that includes screenshots or badge icons (e.g., GitHub stars, license, built-with). I can also convert this into a Markdown file and help push it to your GitHub repo.
 
 
-## You can view this website atthis link
+## You can view this website atthis link     
+https://reggan44.github.io/Code-Challenge-2/
 
 
 
